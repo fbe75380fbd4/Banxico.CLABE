@@ -50,9 +50,9 @@ Get-ChildItem -Path "$($publishDir.FullName)\Banxico.CLABE\functions\" -Recurse 
 }
 
 # Gather scripts
-Get-ChildItem -Path "$($publishDir.FullName)\Banxico.CLABE\internal\scripts\" -Recurse -File -Filter "*.ps1" | ForEach-Object {
-	$text += [System.IO.File]::ReadAllText($_.FullName)
-}
+#Get-ChildItem -Path "$($publishDir.FullName)\Banxico.CLABE\internal\scripts\" -Recurse -File -Filter "*.ps1" | ForEach-Object {
+#	$text += [System.IO.File]::ReadAllText($_.FullName)
+#}
 
 #region Update the psm1 file & Cleanup
 [System.IO.File]::WriteAllText("$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psm1", ($text -join "`n`n"), [System.Text.Encoding]::UTF8)
