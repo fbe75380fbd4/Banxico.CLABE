@@ -1,3 +1,7 @@
+## 1.1.0
+
+Improve CSV import on Get-BranchOfficeData
+
 ## 1.0.2
 
 Fix missing BranchOffices.csv file

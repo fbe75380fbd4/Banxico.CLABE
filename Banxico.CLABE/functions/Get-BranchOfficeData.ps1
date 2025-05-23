@@ -53,7 +53,15 @@ function Get-BranchOfficeData
 	}
 	process
 	{
-		$Data = Import-Csv -Path "$PSScriptRoot\..\internal\data\BranchOffices.csv"
+		$Path = $PSScriptRoot
+		$Leaf = Split-Path -Leaf -Path $Path
+
+		if ($Leaf -eq 'functions')
+		{
+			$Path = Split-Path -Parent -Path $Path
+		}
+
+		$Data = Import-Csv -Path "$Path\internal\data\BranchOffices.csv"
 	}
 	end
 	{
