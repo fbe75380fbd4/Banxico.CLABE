@@ -49,14 +49,9 @@ Get-ChildItem -Path "$($publishDir.FullName)\Banxico.CLABE\functions\" -Recurse 
 	$text += [System.IO.File]::ReadAllText($_.FullName)
 }
 
-# Gather scripts
-#Get-ChildItem -Path "$($publishDir.FullName)\Banxico.CLABE\internal\scripts\" -Recurse -File -Filter "*.ps1" | ForEach-Object {
-#	$text += [System.IO.File]::ReadAllText($_.FullName)
-#}
-
 #region Update the psm1 file & Cleanup
 [System.IO.File]::WriteAllText("$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psm1", ($text -join "`n`n"), [System.Text.Encoding]::UTF8)
-Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\internal" -Recurse -Force
+Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\internal\functions" -Recurse -Force
 Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\functions" -Recurse -Force
 #endregion Update the psm1 file & Cleanup
 

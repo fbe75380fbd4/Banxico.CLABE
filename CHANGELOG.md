@@ -1,3 +1,7 @@
+## 1.0.2
+
+Fix missing BranchOffices.csv file
+
 ## 1.0.1
 
 Fix build script
