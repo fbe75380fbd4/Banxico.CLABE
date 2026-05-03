@@ -1,3 +1,7 @@
+## 1.1.2
+
+Fix missing BranchOffices.csv file
+
 ## 1.1.1
 
 - Added license and project information
