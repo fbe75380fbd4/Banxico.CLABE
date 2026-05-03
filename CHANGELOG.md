@@ -1,3 +1,7 @@
+## 1.1.3
+
+Use basic http parsing for Get-InstitutionData
+
 ## 1.1.2
 
 Fix missing BranchOffices.csv file

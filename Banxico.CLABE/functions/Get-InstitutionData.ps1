@@ -35,38 +35,31 @@ Code Institution
 999  TEST
 
 #>
-function Get-InstitutionData
-{
+function Get-InstitutionData {
 	[CmdletBinding()]
-	Param (
+	param (
 		[Parameter()]
 		[ValidatePattern('^[\d]{3}$')]
 		[string]
 		$Code
 	)
 	
-	begin
-	{
+	begin {
 		$Data = @()
 	}
-	process
-	{
-		$Response = Invoke-WebRequest -Uri 'https://www.banxico.org.mx/cep-scl/listaInstituciones.do'
+	process {
+		$Response = Invoke-WebRequest -Uri 'https://www.banxico.org.mx/cep-scl/listaInstituciones.do' -UseBasicParsing
 
-		if ($Response.StatusCode -ne 200)
-		{
+		if ($Response.StatusCode -ne 200) {
 			Write-Error "Unable to retrieve data from Banxico."
 		}
-		else
-		{
+		else {
 			$Data = ConvertFrom-HtmlData -Html $Response.Content
 		}
 	}
-	end
-	{
-		if ($Code)
-		{
-			$Data = $Data | Where-Object {$_.Code -eq $Code}
+	end {
+		if ($Code) {
+			$Data = $Data | Where-Object { $_.Code -eq $Code }
 		}
 
 		return $Data
