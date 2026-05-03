@@ -1,6 +1,6 @@
 ﻿<#
 This script wraps up the module, creating a finished artifact, ready to publish a repository such as the PS Gallery.
-Useres PowerShellGet for interaction with the package management system.
+Useres PSFramework.NuGet for interaction with the package management system.
 
 Insert any build steps you may need to take before publishing it here.
 #>
@@ -30,7 +30,7 @@ if (-not $WorkingDirectory) { $WorkingDirectory = Split-Path $PSScriptRoot }
 #endregion Handle Working Directory Defaults
 
 #region Handle Configuration
-$config = Import-PowerShellDataFile -Path (Join-Path -Path $WorkingDirectory -ChildPath 'config.psd1') -ErrorAction Stop
+$config = Import-PSFPowerShellDataFile -Path (Join-Path -Path $WorkingDirectory -ChildPath 'config.psd1') -ErrorAction Stop
 if ($PSBoundParameters.Keys -notcontains 'AutoVersion') {
 	$AutoVersion = $config.AutoVersion
 }
@@ -69,15 +69,14 @@ if ($functionNames) {
 
 #region Update the psm1 file & Cleanup
 [System.IO.File]::WriteAllText("$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psm1", ($text -join "`n`n"), [System.Text.Encoding]::UTF8)
-Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\internal\functions" -Recurse -Force
-Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\internal\scripts" -Recurse -Force
+Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\internal" -Recurse -Force
 Remove-Item -Path "$($publishDir.FullName)\Banxico.CLABE\functions" -Recurse -Force
 #endregion Update the psm1 file & Cleanup
 
 #region Updating the Module Version
 if ($AutoVersion) {
 	Write-Host "Updating module version numbers."
-	try { [version]$remoteVersion = (Find-Module 'Banxico.CLABE' -Repository $Repository -ErrorAction Stop).Version }
+	try { [version]$remoteVersion = @(Find-PSFModule 'Banxico.CLABE' -Repository $Repository -ErrorAction Stop | Sort-Object Version -Descending)[0].Version }
 	catch {
 		throw "Failed to access $($Repository) : $_"
 	}
@@ -85,8 +84,8 @@ if ($AutoVersion) {
 		throw "Couldn't find Banxico.CLABE on repository $($Repository) : $_"
 	}
 	$newBuildNumber = $remoteVersion.Build + 1
-	[version]$localVersion = (Import-PowerShellDataFile -Path "$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psd1").ModuleVersion
-	Update-ModuleManifest -Path "$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psd1" -ModuleVersion "$($localVersion.Major).$($localVersion.Minor).$($newBuildNumber)"
+	[version]$localVersion = (Import-PSFPowerShellDataFile -Path "$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psd1").ModuleVersion
+	Update-PSFModuleManifest -Path "$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psd1" -ModuleVersion "$($localVersion.Major).$($localVersion.Minor).$($newBuildNumber)"
 }
 #endregion Updating the Module Version
 
@@ -95,6 +94,6 @@ if ($ExportFunctions) {
 	Write-Host "Exporting all public functions"
 
 	$functionFiles = Get-ChildItem -Path "$($WorkingDirectory)\Banxico.CLABE\functions" -Filter '*.ps1' -Recurse
-	Update-ModuleManifest -Path "$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psd1" -FunctionsToExport ($functionFiles.BaseName | Sort-Object)
+	Update-PSFModuleManifest -Path "$($publishDir.FullName)\Banxico.CLABE\Banxico.CLABE.psd1" -FunctionsToExport ($functionFiles.BaseName | Sort-Object)
 }
 #endregion Export Functions
